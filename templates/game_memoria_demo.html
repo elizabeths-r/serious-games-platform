@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo - Juego de Memoria</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Gill Sans Extrabold", Helvetica, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .demo-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            border: 2px solid black;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        h1 {
+            color: black;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 45px;
+        }
+
+        .subtitle {
+            color: black;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 5px solid black;
+            border-radius: 5px;
+        }
+
+        #info {
+            margin-bottom: 30px;
+            font-size: 30px;
+            color: #333;
+        }
+
+        #score {
+            font-weight: bold;
+            color: black;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 200px);
+            gap: 18px;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            width: 200px;
+            height: 200px;
+            background: #ccc;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .card.flip {
+            background-color: #fff;
+            border-color: #667eea;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            display: none;
+            object-fit: contain;
+            padding: 5px;
+        }
+
+        .card.flip img {
+            display: block;
+        }
+
+        .card.matched {
+            background-color: #4caf50;
+            cursor: default;
+            border-color: #4caf50;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .card.matched img {
+            opacity: 0.8;
+        }
+
+        .btn-demo {
+            background: white;
+            color: black;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: 2px solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+
+        .btn-demo:hover {
+            background: #f0f0f0;
+            color: black;
+            text-decoration: none;
+        }
+
+        .btn-demo.highlight {
+            animation: highlight-pulse 4s ease-in-out;
+        }
+
+        #message {
+            font-size: 30px;
+            color: black;
+            margin-top: 20px;
+            min-height: 30px;
+            font-weight: bold;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 20px;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .instruction-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 16px;
+            text-align: center;
+            color: #333;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+        </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎮 Juego de Memoria</h1>
+        
+        <div class="demo-section">
+            <div class="info-text">
+                <p>💡 Haz clic en las cartas para voltearlas y encuentra los pares iguales</p>
+            </div>
+
+            <div class="grid" id="grid">
+                <!-- Las cartas se generarán aquí -->
+            </div>
+            <div id="info">
+                Puntuación: <span id="score">0</span>
+            </div>
+            <p id="message"></p>
+            <div class="button-group">
+                <button class="btn-demo" id="startButton">▶️ Comenzar Demo</button>
+                <button class="btn-demo" onclick="location.href='/game_menu'">⬅️ Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='game_memoria_demo.js') }}"></script>
+</body>
+</html>

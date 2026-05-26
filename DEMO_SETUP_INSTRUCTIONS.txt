@@ -1,0 +1,19 @@
+# COPIAR ESTA RUTA A TU ARCHIVO PRINCIPAL DE FLASK
+# Ejemplo: web_interface_portuguese.py u otro archivo main
+
+# ======== AGREGAR ESTA RUTA ========
+
+# @app.route('/demo_game')
+# def demo_game():
+#     """Página de demostración interactiva del juego"""
+#     return render_template('demo_game.html', title='Demo - Atenção Ativa')
+
+# ====================================
+
+# Si lo prefieres, puedes agregar también un botón en el menú principal que enlace a:
+# <a href="/demo_game" class="btn btn-info">Ver Demo del Juego</a>
+
+# O en el HTML del menú, agregar algo como:
+# <button class="btn btn-info btn-lg" onclick="location.href='/demo_game'">
+#     <span class="glyphicon glyphicon-play"></span> Ver Demo
+# </button>

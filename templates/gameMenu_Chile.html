@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+      body
+      {
+        width: 800px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 0 20px 20px 20px;
+        border: 3px solid black;
+        font-family: "Gill Sans Extrabold", Helvetica, sans-serif;
+      }
+
+      h1
+      {
+        font-size: 50px;
+        text-align: center;
+      }
+
+      p
+      {
+        text-align: center;
+      }
+
+
+      .button
+      {
+        background:transparent;
+        border: 1px solid transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1;
+        margin: 10px;
+        padding: 5px 15px;
+        text-align: center;
+        text-decoration: none;
+        display:inline-block;
+        outline:none;
+        position:relative;
+        top:0;
+        text-shadow:0 1px 1px rgba(0, 0, 0, 0.5);
+        -webkit-transition: all 0.2s ease-in-out 0s;
+        -moz-transition: all 0.2s ease-in-out 0s;
+        -ms-transition: all 0.2s ease-in-out 0s;
+        transition: all 0.2s ease-in-out 0s;
+      }
+
+      .grey
+      {
+        background:#4c4c4c;
+        color:#fff;
+        box-shadow: 0 2px 0 #333333;
+      }
+
+      .grey:hover
+      {
+        background:#747373;
+      }
+
+      .grey:active, .grey:focus
+      {
+        background:#444444;
+      }
+
+      #playerNameDisplay
+      {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Modal para seleccionar sesión -->
+    <div id="sessionModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Seleccionar Sesión</h4>
+          </div>
+          <div class="modal-body">
+            <p>Por favor, selecciona una sesión:</p>
+            <div id="sessionsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para capturar nombre del jugador -->
+    <div id="playerNameModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Bienvenida</h4>
+          </div>
+          <div class="modal-body">
+            <p id="sessionInfo"></p>
+            <p>Por favor, ingresa tu nombre:</p>
+            <input type="text" id="playerNameInput" class="form-control" placeholder="Tu nombre aquí" maxlength="50">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="backBtn">Atrás</button>
+            <button type="button" class="btn btn-primary" id="confirmNameBtn">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h1>Jogos</h1>
+    <div id="playerNameDisplay"></div>
+    <div id="gamesContainer"></div>
+
+    <script>
+      // ====== CONFIGURACIÓN DE SESIONES ======
+      // MODIFICAR AQUÍ: Agrega tus sesiones y los juegos que incluyen
+      const sessions = {
+        'session1': {
+          name: 'Sesion 1',
+          games: ['atac', 'memoriamagic', 'detectivemotions']
+        },
+        'session2': {
+          name: 'Sesion 2',
+          games: ['guardianes', 'planificar','memoriamagic']
+        },
+        'session3': {
+          name: 'Sesion 3',
+          games: ['atac', 'detectivemotions','planificar']
+        },
+        'session4': {
+          name: 'Sesion 4',
+          games: ['guardianes', 'memoriamagic','detectivemotions']
+        },    
+        'session5': {
+            name: 'Sesion 5',
+            games: ['atac', 'planificar','memoriamagic']
+        },
+        'session6': {
+          name: 'Sesion 6',
+          games: ['guardianes', 'atac','detectivemotions']
+        },
+        'session7': {
+            name: 'Sesion 7',
+            games: ['planificar', 'memoriamagic','detectivemotions']
+        },
+        'session8': {
+              name: 'Sesion 8',
+              games: ['guardianes', 'planificar','atac']
+        }
+      };
+
+      // ====== CONFIGURACIÓN DE JUEGOS ======
+      // Define todos los juegos disponibles y sus URLs
+      const gamesConfig = {
+        'atac': {
+          name: 'Jogo 1 - Atenção ativa',
+          levels: [
+            { name: 'Demo', url: '/demo_game' },
+            { name: 'Nível básico', url: '/game_atac?level=basic' },
+            { name: 'Nível intermedio', url: '/game_atac?level=intermediate' },
+            { name: 'Nível avançado', url: '/game_atac?level=advanced' }
+          ]
+        },
+        'guardianes': {
+          name: 'Jogo 2 - Guardiões',
+          levels: [
+            { name: 'Demo', url: '/demo_game2' },
+            { name: 'Nível básico', url: '/game_guardianes?level=basic' },
+            { name: 'Nível intermedio', url: '/game_guardianes?level=intermediate' },
+            { name: 'Nível avançado', url: '/game_guardianes?level=advanced' }
+          ]
+        },
+        'memoriamagic': {
+          name: 'Jogo 3 - Memória mágica',
+          levels: [
+            { name: 'Demo', url: '/demo_game3' },
+            { name: 'Nível básico', url: '/game_memoriamagic?level=basic' },
+            { name: 'Nível intermedio', url: '/game_memoriamagic?level=intermediate' },
+            { name: 'Nível avançado', url: '/game_memoriamagic?level=advanced' }
+          ]
+        },
+        'planificar': {
+          name: 'Jogo 4 - Planejamento',
+          levels: [
+            { name: 'Demo', url: '/game_planificar_demo' },
+            { name: 'Nível básico', url: '/game_planificar?level=basic' },
+            { name: 'Nível intermedio', url: '/game_planificar?level=intermediate' },
+            { name: 'Nível avançado', url: '/game_planificar?level=advanced' }
+          ]
+        },
+        'detectivemotions': {
+          name: 'Jogo 5 - Detetive de emoções',
+          levels: [
+            { name: 'Demo Nivel Basico', url: '/game_detective_demo1' },
+            { name: 'Nível básico', url: '/game_detectivemotions?level=basic' },
+            { name: 'Nível medio', url: '/game_detectivemotions?level=medium' },
+            { name: 'Nível avançado', url: '/game_detectivemotions?level=advanced' }
+          ]
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const savedSession = sessionStorage.getItem('selectedSession');
+        const savedPlayerName = sessionStorage.getItem('playerName');
+        
+        if (!savedSession) {
+          // Mostrar modal de selección de sesión
+          renderSessionsList();
+          $('#sessionModal').modal('show');
+        } else if (!savedPlayerName) {
+          // Mostrar modal de nombre
+          displayNameModal();
+          $('#playerNameModal').modal('show');
+        } else {
+          // Mostrar menú de juegos
+          displayGames();
+          displayPlayerInfo();
+        }
+
+        // Manejar confirmación del nombre
+        document.getElementById('confirmNameBtn').addEventListener('click', function() {
+          const playerName = document.getElementById('playerNameInput').value.trim();
+          
+          if (playerName === '') {
+            alert('Por favor, ingresa tu nombre');
+            return;
+          }
+
+          sessionStorage.setItem('playerName', playerName);
+          
+          // Mostrar juegos
+          $('#playerNameModal').modal('hide');
+          displayGames();
+          displayPlayerInfo();
+        });
+
+        // Botón atrás
+        document.getElementById('backBtn').addEventListener('click', function() {
+          sessionStorage.removeItem('selectedSession');
+          $('#playerNameModal').modal('hide');
+          renderSessionsList();
+          $('#sessionModal').modal('show');
+        });
+
+        // Enter en input de nombre
+        document.getElementById('playerNameInput').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            document.getElementById('confirmNameBtn').click();
+          }
+        });
+
+        function renderSessionsList() {
+          const sessionsList = document.getElementById('sessionsList');
+          sessionsList.innerHTML = '';
+          
+          for (const [sessionId, sessionData] of Object.entries(sessions)) {
+            const button = document.createElement('button');
+            button.className = 'btn btn-default btn-block btn-lg';
+            button.style.marginBottom = '10px';
+            button.textContent = sessionData.name;
+            
+            button.addEventListener('click', function() {
+              sessionStorage.setItem('selectedSession', sessionId);
+              $('#sessionModal').modal('hide');
+              displayNameModal();
+              $('#playerNameModal').modal('show');
+            });
+            
+            sessionsList.appendChild(button);
+          }
+        }
+
+        function displayNameModal() {
+          const sessionId = sessionStorage.getItem('selectedSession');
+          const sessionName = sessions[sessionId].name;
+          document.getElementById('sessionInfo').textContent = 'Sesión: ' + sessionName;
+        }
+
+        function displayPlayerInfo() {
+          const playerName = sessionStorage.getItem('playerName');
+          const sessionId = sessionStorage.getItem('selectedSession');
+          const sessionName = sessions[sessionId].name;
+          
+          document.getElementById('playerNameDisplay').innerHTML = 
+            '<div style="text-align: center; margin-bottom: 20px; padding: 10px; background-color: #f0f0f0; border-radius: 5px;">' +
+            '<p><strong>Sesión:</strong> ' + sessionName + '</p>' +
+            '<p><strong>Jugador:</strong> ' + playerName + '</p>' +
+            '<a href="#" id="changeSession" style="font-size: 14px;"><strong>Cambiar sesión</strong></a> | ' +
+            '<a href="#" id="changeName" style="font-size: 14px;"><strong>Cambiar nombre</strong></a>' +
+            '</div>';
+          
+          document.getElementById('changeSession').addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.clear();
+            location.reload();
+          });
+          
+          document.getElementById('changeName').addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('playerName');
+            displayNameModal();
+            $('#playerNameModal').modal('show');
+          });
+        }
+
+        function displayGames() {
+          const sessionId = sessionStorage.getItem('selectedSession');
+          const gameIds = sessions[sessionId].games;
+          const gamesContainer = document.getElementById('gamesContainer');
+          gamesContainer.innerHTML = '';
+          
+          let buttonsDiv = document.createElement('div');
+          let gamesPerRow = 0;
+          
+          gameIds.forEach((gameId, index) => {
+            const gameData = gamesConfig[gameId];
+            
+            // Crear nueva fila cada 2 juegos
+            if (gamesPerRow === 2) {
+              buttonsDiv = document.createElement('div');
+              gamesContainer.appendChild(document.createElement('p'));
+              gamesContainer.appendChild(buttonsDiv);
+              gamesPerRow = 0;
+            }
+            
+            if (gamesPerRow === 0) {
+              gamesContainer.appendChild(buttonsDiv);
+            }
+            
+            const gameGroup = document.createElement('div');
+            gameGroup.className = 'btn-group';
+            
+            const mainBtn = document.createElement('button');
+            mainBtn.style.width = '350px';
+            mainBtn.className = 'btn btn-default btn-lg dropdown-toggle';
+            mainBtn.setAttribute('data-toggle', 'dropdown');
+            mainBtn.innerHTML = gameData.name + ' <span class="caret"></span>';
+            
+            const dropdown = document.createElement('ul');
+            dropdown.className = 'dropdown-menu';
+            
+            gameData.levels.forEach(level => {
+              const li = document.createElement('li');
+              const link = document.createElement('a');
+              link.href = '#';
+              link.className = 'game-link';
+              link.setAttribute('data-url', level.url);
+              link.textContent = level.name;
+              
+              link.addEventListener('click', function(e) {
+                e.preventDefault();
+                launchGame(level.url);
+              });
+              
+              li.appendChild(link);
+              dropdown.appendChild(li);
+            });
+            
+            gameGroup.appendChild(mainBtn);
+            gameGroup.appendChild(dropdown);
+            
+            const spacer = document.createElement('div');
+            spacer.style.display = 'inline-block';
+            spacer.style.marginRight = '10px';
+            spacer.appendChild(gameGroup);
+            
+            buttonsDiv.appendChild(spacer);
+            gamesPerRow++;
+          });
+        }
+
+        function launchGame(baseUrl) {
+          const playerName = sessionStorage.getItem('playerName');
+          const selectedSession = sessionStorage.getItem('selectedSession');
+          const sessionName = sessions[selectedSession].name;
+          
+          const separator = baseUrl.includes('?') ? '&' : '?';
+          let finalUrl = baseUrl + separator + 'name=' + encodeURIComponent(playerName);
+          finalUrl += '&sessionName=' + encodeURIComponent(sessionName);
+          
+          window.location.href = finalUrl;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nivel 1 - Juego</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            width: 800px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f9f9f9;
+            margin: 0 auto;
+            padding: 0 20px 20px 20px;
+            border: 3px solid black;
+        }
+
+        /* Budget arriba derecha */
+        #budget-container {
+            position: absolute;
+            top: 30px;
+            right: 1000px;
+            font-size: 60px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        #budget-container img {
+            width: 60px;
+            height: 60px;
+        }
+
+        /* Opciones en el centro */
+        #options {
+            margin-top: 70px;
+            display: grid;
+            grid-template-columns: repeat(2, 120px);
+            justify-content: center;
+            column-gap: 100px;
+            row-gap: 10px;     /* opcional: espacio entre filas si quieres */
+        }
+        /* tamaÃ±o de las imÃ¡genes en el panel de opciones */
+        #options img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            cursor: grab;
+            background: #fff;
+            padding: 5px;
+            transition: transform 0.2s;
+        }
+        #options img:active {
+            transform: scale(0.9);
+        }
+
+        /* Slots */
+        #slots {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        .drop-slot {
+            width: 120px;              /* tamaÃ±o fijo para que no colapse */
+            height: 120px;
+            border: 3px dashed #aaa;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #555;
+            background: #f0f0f0;
+            box-sizing: border-box;
+        }
+
+        /* Asegurar que las imÃ¡genes dentro del slot mantengan proporciÃ³n y no crezcan */
+        .drop-slot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            width: auto;
+            height: auto;
+        }
+
+        /* Modal */
+        #modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 2px solid #333;
+            padding: 20px;
+            display: none;
+            z-index: 1000;
+            border-radius: 10px;
+            min-width: 240px;
+            text-align: center;
+        }
+        #modal button {
+            margin-top: 10px;
+            padding: 5px 15px;
+        }
+
+        /* Feedback simple */
+        #feedback {
+            margin-top: 14px;
+            font-weight: bold;
+            min-height: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- Budget -->
+    <div id="budget-container" style="display:none;">
+        <img src="/static/images/coins.png" alt="coins">
+        $<span id="budget">60</span>
+    </div>
+    <h1>Organizando mi fiesta</h1>
+<div id="score-container">
+    <span style="font-size: 24px; font-weight: bold;">Puntuacion: </span>
+    <span id="score">0</span>
+</div>
+    <!-- Opciones -->
+    <div id="options">
+        <div class="item-container" data-index="0">        
+            <img src="/static/images/food/Bolinho.png" data-item="comida1"   data-slot="comida" draggable="true" alt="comida1">
+        </div>
+        <div class="item-container" data-index="1" style="display:none;"> 
+            <img src="/static/images/food/Bolo.png"    data-item="comida2"   data-slot="comida"      draggable="true" alt="comida2">
+        </div>
+        <div class="item-container" data-index="2">
+            <img src="/static/images/party/Guirlandas.png" data-item="decoracion" data-slot="decoracion" draggable="true" alt="decoracion">
+        </div>
+        <div class="item-container" data-index="3">
+            <img src="/static/images/activities_party/Pintar.png" data-item="actividad" data-slot="actividad" draggable="true" alt="actividad">
+        </div>
+    </div>
+
+    <!-- Slots -->
+    <div id="slots">
+        <div class="drop-slot" id="comida_slot"      data-slot="comida">Comida </div>
+        <div class="drop-slot" id="decoracion_slot"  data-slot="decoracion">Decoración</div>
+        <div class="drop-slot" id="actividad_slot"   data-slot="actividad">Actividad</div>
+    </div>
+<p></p>
+    <form action="/game_planificar" method="POST">
+        <input type="hidden" name="action" value="button_pressed">
+        <!--input type="hidden" name="level" value="{{ level }}"-->
+        <button type="submit" class="btn btn-default btn-lg">¿Como Jugar?</button>
+    </form>
+<p></p>
+<!-- Modal para mostrar puntaje final -->
+<div id="scoreModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Juego terminado</h4>
+      </div>
+      <div class="modal-body">
+        <p>Felicidades, Tu puntuacion final: <span id="scoreDisplay"></span></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="goToResults" class="btn btn-default" data-dismiss="modal">Ok</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <button class="btn btn-default btn-lg" onclick="location.href='/game_menu'">Menu</button>
+    <!-- Modal -->
+    <div id="feedback"></div>
+
+    <!-- JS separado -->
+    <script src="/static/game_4.js"></script>
+</body>
+</html>
