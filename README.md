@@ -2,6 +2,9 @@
 
 Interactive serious games platform developed with Python, Flask, and JavaScript for human-robot interaction applications. The platform supports educational and therapeutic serious games, user interaction tracking, and integration with robotic systems.
 
+## Purpose
+This platform was developed to support serious games applications in educational and therapeutic environments, including integration with social robots and user performance monitoring.
+
 ## Features
 
 - Interactive serious games
@@ -12,11 +15,18 @@ Interactive serious games platform developed with Python, Flask, and JavaScript 
 
 ## Technologies
 
+### Backend
 - Python
 - Flask
-- JavaScript
-- HTML/CSS
 - SQLite
+
+### Frontend
+- HTML
+- CSS
+- JavaScript
+
+### Database
+- SQL
 
 ## Project Structure
 
