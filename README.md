@@ -1,5 +1,10 @@
 # Serious Games Platform
 
+## Repository Status
+
+This project is currently under active development.
+
+
 Interactive serious games platform developed with Python, Flask, and JavaScript for human-robot interaction applications. The platform supports educational and therapeutic serious games, user interaction tracking, and integration with robotic systems.
 
 ## Purpose
